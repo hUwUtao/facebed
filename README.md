@@ -1,46 +1,61 @@
 # facebed
-A Facebook embed provider for Discord and other messaging apps.
+
+Facebook embed proxy, now in Java because apparently I enjoy bean cosplay and extra moving parts.
+
+Co-authored by GPT-5.4-mini inside Opencode. The machine gets a chair too.
 
 [![2IrN8Ux.png](https://iili.io/2IrN8Ux.png)](https://freeimage.host/)
 
+## For users
 
-## For users:
-Replace `www.facebook.com` in your Facebook URL to `facebed.com`.
-<details>
-<summary>Vencord settings</summary>
+Replace `www.facebook.com` with `facebed.com`.
 
-Using regex:
-- Find: `https://(www.)?facebook.com/(.*)`
-- Replace: `https://facebed.com/$2`
+Discord/Vencord regex:
 
-</details>
+```text
+Find: https://(www.)?facebook.com/(.*)
+Replace: https://facebed.com/$2
+```
 
-# For developers and maintainers
+Append `/text` for text-only mode.
 
-## Deployment
+## For developers
 
-1. Install `python>=3.12` with `pip` and `virtualenv`
-2. Clone this repository
-3. Copy `start.example.py` to `start.py` and edit the `PYTHON` variable to point to your venv or 
-system installation (not recommended)
-4. Copy `user_config.example.py` to `user_config.py` and edit the self-explanatory options
-5. Start the `start.py` script
+### Run locally
 
-## Remote updating
-This feature allows remote update triggers (git pull-ing and running a restart command)
-for instance maintainers. The `/update` endpoint is protected with HTTP username and password,
-which are set in the file `user_config.py`.
+```bash
+mvn spring-boot:run
+```
 
-## Cookies (DO NOT USE)
-Use the cookies exported using the extension Cookie Editor with the json format. Will warn 
-maintainers if any cookies expired.
-**DO NOT USE RIGHT NOW, WILL CAUSE A CHECKPOINT ON YOUR ACCOUNT**
+or
 
-## Start command and virtual environment
-I recommend running `facebed` in a virtual environment if you don't want to pollute your
-system-wide python installation.
+```bash
+mvn -DskipTests package
+java -jar target/facebed-1.0.0-SNAPSHOT.jar
+```
 
-Copy `start.example.py` to `start.py` and edit the `PYTHON` variable to the full path of
-your python interpreter. Two examples are provided for running `facebed` in a `venv` virtual environment on
-Windows and Linux. After that, you can start `facebed` by running `python start.py` using your 
-system's python since that script doesn't have any external dependencies.
+### Docker
+
+```bash
+docker build -t facebed .
+docker run --rm -p 9812:9812 facebed
+```
+
+### Config
+
+```yaml
+host: 0.0.0.0
+port: 9812
+timezone: 7
+banned_users: []
+notifier_webhook: ''
+```
+
+`cookies.json` still works. If it expires, the app will complain with great confidence.
+
+## Notes
+
+This repo is a Facebook embed gremlin with a Spring-shaped hat.
+The code is intentionally a little overbuilt because that is the joke.
+
+Not affiliated with Meta or Facebook.

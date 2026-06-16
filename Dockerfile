@@ -1,13 +1,16 @@
-FROM python:3.14-alpine AS builder
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /app
-COPY requirements.txt .
-RUN pip3.14 install -r ./requirements.txt
+COPY pom.xml .
+COPY src ./src
+COPY assets ./assets
+RUN mvn -q -DskipTests package
 
-FROM python:3.14-alpine
+FROM eclipse-temurin:21-jre
 WORKDIR /facebed
-COPY . .
+COPY --from=builder /app/target/facebed-1.0.0-SNAPSHOT.jar ./facebed.jar
+COPY assets ./assets
 RUN /bin/sh -c "echo '{}' > ./config.yaml"
-COPY --from=builder /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
-RUN adduser -D facebed
+RUN adduser --disabled-password --gecos '' facebed
 USER facebed
-CMD ["python3.14", "./facebed.py", "-c", "./config.yaml"]
+EXPOSE 9812
+CMD ["java", "-jar", "./facebed.jar", "-c", "./config.yaml"]
